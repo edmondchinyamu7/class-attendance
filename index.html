@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="#111827" name="theme-color"/>
+  <title>
+   ClassPilot — School Management
+  </title>
+  <link href="assets/css/styles.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+  </script>
+ </head>
+ <body>
+  <section class="login-screen" id="loginScreen">
+   <div class="login-card">
+    <div class="login-brand">
+     <div class="brandmark">
+      ✦
+     </div>
+     <div>
+      <strong style="font:800 19px Manrope">
+       ClassPilot
+      </strong>
+      <small style="display:block;color:#8b97aa;font-size:9px;letter-spacing:1.5px;margin-top:2px">
+       SCHOOL MANAGEMENT
+      </small>
+     </div>
+    </div>
+    <h1>
+     Welcome back
+    </h1>
+    <p>
+     Sign in to continue to your teacher or parent dashboard.
+    </p>
+    <div class="login-error" id="loginError" role="alert">
+    </div>
+    <form id="loginForm">
+     <div class="formrow">
+      <label for="loginRole">
+       I am signing in as
+      </label>
+      <select id="loginRole" name="role">
+       <option value="school_admin">
+        School Administrator
+       </option>
+       <option value="teacher">
+        Teacher
+       </option>
+       <option value="parent">
+        Parent / Guardian
+       </option>
+      </select>
+     </div>
+     <div class="formrow">
+      <label for="loginEmail">
+       Email address
+      </label>
+      <input autocomplete="username" id="loginEmail" name="email" placeholder="name@example.com" required="" type="email"/>
+     </div>
+     <div class="formrow">
+      <label for="loginPassword">
+       Password
+      </label>
+      <input autocomplete="current-password" id="loginPassword" name="password" placeholder="Enter your password" required="" type="password"/>
+     </div>
+     <button class="btn primary login-submit" type="submit">
+      Sign in securely →
+     </button>
+    </form>
+    <p style="font-size:11px;color:#718096;margin:16px 0 0;text-align:center">
+     New school?
+     <button class="linkbtn" onclick="openModal('schoolSignupModal')" type="button">
+      Register your school
+     </button>
+    </p>
+   </div>
+  </section>
+  <div class="app hidden" id="mainApp">
+   <aside class="sidebar" id="sidebar">
+    <div class="brand">
+     <div class="brandmark">
+      ✦
+     </div>
+     <div>
+      <strong>
+       ClassPilot
+      </strong>
+      <small>
+       SCHOOL MANAGEMENT
+      </small>
+     </div>
+    </div>
+    <div class="navlabel">
+     Workspace
+    </div>
+    <nav class="nav" id="nav">
+     <button class="active" data-page="overview">
+      <span>
+       ▦
+      </span>
+      Overview
+     </button>
+     <button data-page="attendance">
+      <span>
+       ◷
+      </span>
+      Attendance
+     </button>
+     <button data-page="students">
+      <span>
+       ♙
+      </span>
+      Students
+     </button>
+     <button data-page="lessons">
+      <span>
+       ▤
+      </span>
+      Lesson notes
+     </button>
+     <button data-page="results">
+      <span>
+       ▥
+      </span>
+      Academic results
+     </button>
+     <button data-page="reports">
+      <span>
+       ⌁
+      </span>
+      Reports &amp; exports
+     </button>
+     <button data-page="parent">
+      <span>
+       ♡
+      </span>
+      Parent dashboard
+     </button>
+    </nav>
+    <div class="sidebottom">
+     A clearer view of every school day.
+     <div class="profile">
+      <div class="avatar" id="sideAvatar">
+       TC
+      </div>
+      <div>
+       <b id="sideName">
+        Teacher
+       </b>
+       <small id="sideRole">
+        Teacher account
+       </small>
+      </div>
+     </div>
+    </div>
+   </aside>
+   <main class="main">
+    <header class="topbar">
+     <div style="display:flex;align-items:center;gap:12px">
+      <button class="iconbtn mobilemenu" id="menuBtn">
+       ☰
+      </button>
+      <div class="crumb">
+       Workspace /
+       <b id="crumb">
+        Overview
+       </b>
+      </div>
+     </div>
+     <div class="topright">
+      <span class="today" id="today">
+      </span>
+      <button class="iconbtn" id="quickAddBtn" onclick="openModal('studentModal')" title="Quick add">
+       ＋
+      </button>
+      <div class="user-chip">
+       <div class="avatar" id="topAvatar">
+        TC
+       </div>
+       <div>
+        <b id="topName">
+         Teacher
+        </b>
+        <small id="topRole">
+         Teacher
+        </small>
+       </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+       Log out
+      </button>
+     </div>
+    </header>
+    <div class="content">
+     <section class="pagehead">
+      <div>
+       <div class="eyebrow" id="eyebrow">
+        YOUR SCHOOL AT A GLANCE
+       </div>
+       <h1 id="pageTitle">
+        Good day, Administrator 👋
+       </h1>
+       <p id="pageDesc">
+        Here’s what’s happening across your classes today.
+       </p>
+      </div>
+      <div class="actions" id="headActions">
+       <button class="btn" onclick="exportCSV('students')">
+        ⇩ Export students
+       </button>
+       <button class="btn primary" onclick="openModal('studentModal')">
+        ＋ Add student
+       </button>
+      </div>
+     </section>
+     <div id="pageContent">
+     </div>
+    </div>
+   </main>
+  </div>
+  <div class="modalback" id="studentModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>
+      Add a student
+     </h3>
+     <button class="close" onclick="closeModal('studentModal')">
+      ×
+     </button>
+    </div>
+    <form id="studentForm">
+     <div class="formgrid">
+      <div class="formrow">
+       <label>
+        Full name
+       </label>
+       <input name="name" placeholder="Student full name" required=""/>
+      </div>
+      <div class="formrow">
+       <label>
+        Student ID
+       </label>
+       <input name="id" placeholder="e.g. STU-010"/>
+      </div>
+      <div class="formrow">
+       <label>
+        Class
+       </label>
+       <select name="className">
+        <option>
+         Form 2 Blue
+        </option>
+        <option>
+         Form 3 Green
+        </option>
+        <option>
+         Form 1 Red
+        </option>
+        <option>
+         Form 4 Gold
+        </option>
+       </select>
+      </div>
+      <div class="formrow">
+       <label>
+        Phone
+       </label>
+       <input name="phone" placeholder="+265 ..."/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Parent / guardian name
+       </label>
+       <input name="parent" placeholder="Parent or guardian"/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Parent phone
+       </label>
+       <input name="parentPhone" placeholder="+265 ..."/>
+      </div>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('studentModal')" type="button">
+       Cancel
+      </button>
+      <button class="btn primary">
+       Save student
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <div class="modalback" id="lessonModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>
+      Add lesson note
+     </h3>
+     <button class="close" onclick="closeModal('lessonModal')">
+      ×
+     </button>
+    </div>
+    <form id="lessonForm">
+     <div class="formgrid">
+      <div class="formrow">
+       <label>
+        Subject
+       </label>
+       <select name="subject">
+        <option>
+         Mathematics
+        </option>
+        <option>
+         English
+        </option>
+        <option>
+         Physics
+        </option>
+        <option>
+         Biology
+        </option>
+        <option>
+         Chemistry
+        </option>
+        <option>
+         Geography
+        </option>
+       </select>
+      </div>
+      <div class="formrow">
+       <label>
+        Class
+       </label>
+       <select name="className">
+        <option>
+         Form 2 Blue
+        </option>
+        <option>
+         Form 3 Green
+        </option>
+        <option>
+         Form 1 Red
+        </option>
+        <option>
+         Form 4 Gold
+        </option>
+       </select>
+      </div>
+      <div class="formrow full">
+       <label>
+        Topic
+       </label>
+       <input name="topic" placeholder="Lesson topic" required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        File name / resource link
+       </label>
+       <input name="file" placeholder="e.g. algebra-notes.pdf or https://..."/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Instructions
+       </label>
+       <textarea name="description" placeholder="What should students work on?"></textarea>
+      </div>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('lessonModal')" type="button">
+       Cancel
+      </button>
+      <button class="btn primary">
+       Save note
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <div class="modalback" id="resultModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>
+      Add academic result
+     </h3>
+     <button class="close" onclick="closeModal('resultModal')">
+      ×
+     </button>
+    </div>
+    <form id="resultForm">
+     <div class="formgrid">
+      <div class="formrow full">
+       <label>
+        Student
+       </label>
+       <select id="resultStudent" name="studentId">
+       </select>
+      </div>
+      <div class="formrow">
+       <label>
+        Subject
+       </label>
+       <select name="subject">
+        <option>
+         Mathematics
+        </option>
+        <option>
+         English
+        </option>
+        <option>
+         Physics
+        </option>
+        <option>
+         Biology
+        </option>
+        <option>
+         Chemistry
+        </option>
+        <option>
+         Geography
+        </option>
+       </select>
+      </div>
+      <div class="formrow">
+       <label>
+        Form
+       </label>
+       <select name="form">
+        <option>
+         Form 1
+        </option>
+        <option>
+         Form 2
+        </option>
+        <option>
+         Form 3
+        </option>
+        <option>
+         Form 4
+        </option>
+       </select>
+      </div>
+      <div class="formrow">
+       <label>
+        Term
+       </label>
+       <select name="term">
+        <option>
+         Term 1
+        </option>
+        <option>
+         Term 2
+        </option>
+        <option>
+         Term 3
+        </option>
+       </select>
+      </div>
+      <div class="formrow full">
+       <label>
+        Score (0–100)
+       </label>
+       <input max="100" min="0" name="score" required="" type="number"/>
+      </div>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('resultModal')" type="button">
+       Cancel
+      </button>
+      <button class="btn primary">
+       Save result
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <div class="modalback" id="schoolSignupModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>
+      Register your school
+     </h3>
+     <button class="close" onclick="closeModal('schoolSignupModal')">
+      ×
+     </button>
+    </div>
+    <form id="schoolSignupForm">
+     <div class="formgrid">
+      <div class="formrow full">
+       <label>
+        School name
+       </label>
+       <input name="schoolName" placeholder="e.g. Central Secondary School" required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Coordinator full name
+       </label>
+       <input name="fullName" placeholder="Full name" required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        School email / administrator login
+       </label>
+       <input name="email" placeholder="school@example.com" required="" type="email"/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Password (minimum 10 characters)
+       </label>
+       <input autocomplete="new-password" minlength="10" name="password" required="" type="password"/>
+      </div>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('schoolSignupModal')" type="button">
+       Cancel
+      </button>
+      <button class="btn primary" type="submit">
+       Create school account
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <div class="modalback" id="parentInviteModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>
+      Register / link a parent
+     </h3>
+     <button class="close" onclick="closeModal('parentInviteModal')">
+      ×
+     </button>
+    </div>
+    <form id="parentInviteForm">
+     <div class="formgrid">
+      <div class="formrow full">
+       <label>
+        Parent full name
+       </label>
+       <input name="fullName" required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Phone number
+       </label>
+       <input name="phone" placeholder="+265 ..."/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Parent email
+       </label>
+       <input name="email" required="" type="email"/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Student ID
+       </label>
+       <input name="studentCode" placeholder="Enter the existing Student ID" required=""/>
+      </div>
+     </div>
+     <p class="smallmuted">
+      A new parent receives an invitation to set their password. If the parent already has a ClassPilot account at this school, this Student ID is added to that account.
+     </p>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('parentInviteModal')" type="button">
+       Cancel
+      </button>
+      <button class="btn primary" type="submit">
+       Send invitation / link child
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <div class="toast" id="toast">
+  </div>
+  <script defer="" src="assets/js/app.js">
+  </script>
+ </body>
+</html>
