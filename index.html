@@ -580,6 +580,28 @@
     </form>
    </div>
   </div>
+  <div class="modalback" id="teacherModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>Invite teacher and assign class</h3>
+     <button class="close" onclick="closeModal('teacherModal')">×</button>
+    </div>
+    <form id="teacherForm">
+     <div class="formgrid">
+      <div class="formrow full"><label>Teacher full name</label><input name="fullName" required placeholder="Teacher full name"/></div>
+      <div class="formrow full"><label>Teacher phone</label><input name="phone" required placeholder="+265 ..."/></div>
+      <div class="formrow full"><label>Teacher email</label><input name="email" type="email" required placeholder="teacher@example.com"/></div>
+      <div class="formrow full"><label>Assigned class / Form</label><input name="className" required placeholder="e.g. Form 2 Blue"/></div>
+      <div class="formrow full"><label>Assigned subject</label><select id="teacherSubject" name="subjectId" required></select></div>
+     </div>
+     <p class="smallmuted">A secure email invitation will be sent so the teacher can create their own password. The teacher will only see students enrolled in this subject and class.</p>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('teacherModal')" type="button">Cancel</button>
+      <button class="btn primary" type="submit">Send teacher invitation</button>
+     </div>
+    </form>
+   </div>
+  </div>
   <div class="modalback" id="parentInviteModal">
    <div class="modal">
     <div class="modalhead">
