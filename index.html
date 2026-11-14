@@ -241,7 +241,7 @@
        <label>
         Student ID
        </label>
-       <input name="id" placeholder="e.g. STU-010"/>
+       <input name="id" placeholder="e.g. STU-010" required=""/>
       </div>
       <div class="formrow">
        <label>
@@ -266,19 +266,25 @@
        <label>
         Phone
        </label>
-       <input name="phone" placeholder="+265 ..."/>
+       <input name="phone" placeholder="+265 ..." required=""/>
       </div>
       <div class="formrow full">
        <label>
         Parent / guardian name
        </label>
-       <input name="parent" placeholder="Parent or guardian"/>
+       <input name="parent" placeholder="Parent or guardian" required=""/>
       </div>
       <div class="formrow full">
        <label>
         Parent phone
        </label>
-       <input name="parentPhone" placeholder="+265 ..."/>
+       <input name="parentPhone" placeholder="+265 ..." required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Parent email
+       </label>
+       <input name="parentEmail" placeholder="parent@example.com" type="email" required=""/>
       </div>
      </div>
      <div class="modalactions">
@@ -561,7 +567,7 @@
       </div>
      </div>
      <p class="smallmuted">
-      A new parent receives an invitation to set their password. If the parent already has a ClassPilot account at this school, this Student ID is added to that account.
+      Parent name, phone number and email must match the details saved during student enrollment. A new parent receives a secure email invitation to set their own password. Existing parent accounts can link additional children using each child's Student ID.
      </p>
      <div class="modalactions">
       <button class="btn" onclick="closeModal('parentInviteModal')" type="button">
