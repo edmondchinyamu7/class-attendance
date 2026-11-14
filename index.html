@@ -131,6 +131,12 @@
       </span>
       Reports &amp; exports
      </button>
+     <button data-page="academics">
+      <span>
+       ▣
+      </span>
+      Subjects &amp; teachers
+     </button>
      <button data-page="parent">
       <span>
        ♡
@@ -286,6 +292,13 @@
        </label>
        <input name="parentEmail" placeholder="parent@example.com" type="email" required=""/>
       </div>
+      <div class="formrow full">
+       <label for="studentSubjects">
+        Student subjects
+       </label>
+       <select id="studentSubjects" name="subjects" multiple required size="7"></select>
+       <small class="smallmuted">Select every subject this student is enrolled in. Only subjects offered by your school will appear.</small>
+      </div>
      </div>
      <div class="modalactions">
       <button class="btn" onclick="closeModal('studentModal')" type="button">
@@ -294,6 +307,44 @@
       <button class="btn primary">
        Save student
       </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <div class="modalback" id="subjectModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>Configure school subjects</h3>
+     <button class="close" onclick="closeModal('subjectModal')">×</button>
+    </div>
+    <form id="subjectForm">
+     <div class="formrow full">
+      <label for="schoolSubjectChoices">Subjects offered by this school</label>
+      <select id="schoolSubjectChoices" name="subjects" multiple size="12" required>
+       <optgroup label="Languages">
+        <option>English</option><option>Chichewa</option><option>French</option>
+       </optgroup>
+       <optgroup label="Sciences and Agriculture">
+        <option>Biology</option><option>Chemistry</option><option>Physics</option><option>Agriculture</option>
+       </optgroup>
+       <optgroup label="Mathematics">
+        <option>Mathematics</option><option>Additional Mathematics</option>
+       </optgroup>
+       <optgroup label="Humanities and Social Sciences">
+        <option>Geography</option><option>History</option><option>Social Studies</option><option>Life Skills</option>
+       </optgroup>
+       <optgroup label="Business and Technology">
+        <option>Commerce</option><option>Accounting</option><option>Business Studies</option><option>Computer Studies</option>
+       </optgroup>
+       <optgroup label="Other common options">
+        <option>Bible Knowledge</option><option>Religious Education</option><option>Home Economics</option><option>Technical Drawing</option><option>General Science</option>
+       </optgroup>
+      </select>
+      <small class="smallmuted">Choose only subjects actually taught at your school. You can add more later.</small>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('subjectModal')" type="button">Cancel</button>
+      <button class="btn primary" type="submit">Save school subjects</button>
      </div>
     </form>
    </div>
