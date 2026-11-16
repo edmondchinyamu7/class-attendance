@@ -845,3 +845,12 @@ button{
 .result-chart-label{font-size:10px;font-weight:700;color:var(--ink);margin-top:8px;max-width:68px;overflow-wrap:anywhere}
 .result-chart-period{font-size:9px;color:var(--muted);margin-top:3px}
 @media(max-width:640px){.result-subject-inputs{grid-template-columns:1fr}.result-subject-row input{width:100px}.result-chart{gap:8px}}
+
+/* School subject management: accessible multi-select checkboxes */
+.subject-select-actions{display:flex;gap:18px;align-items:center;margin:8px 0 12px}
+.subject-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 14px}
+.subject-option{display:flex;align-items:center;gap:10px;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#f8faff;color:var(--ink);font-size:12px;font-weight:700;cursor:pointer}
+.subject-option input{width:17px;height:17px;flex:none;accent-color:#4f6df5}
+.subject-option span{overflow-wrap:anywhere}
+.subject-option small{font-size:9px;font-weight:600;color:var(--muted)}
+@media(max-width:640px){.subject-check-grid{grid-template-columns:1fr}}
