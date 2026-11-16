@@ -60,7 +60,7 @@ function renderSubjectChoices(){
  if(!host)return;
  const defaults=DEFAULT_SCHOOL_SUBJECTS.map(name=>({name,record:allSchoolSubjects.find(s=>s.subject_name.toLowerCase()===name.toLowerCase()),builtIn:true}));
  const extras=allSchoolSubjects.filter(s=>!DEFAULT_SCHOOL_SUBJECTS.some(name=>name.toLowerCase()===s.subject_name.toLowerCase())).map(record=>({name:record.subject_name,record,builtIn:false}));
- host.innerHTML=[...defaults,...extras].map(item=>\`<label class="subject-option"><input type="checkbox" name="schoolSubjects" data-subject-name="\${esc(item.name)}" \${item.record?.is_active?'checked':''}><span>\${esc(item.name)}\${item.builtIn?'':' <small>(additional)</small>'}</span></label>\`).join('');
+ host.innerHTML=[...defaults,...extras].map(item=>`<label class="subject-option"><input type="checkbox" name="schoolSubjects" data-subject-name="${esc(item.name)}" ${item.record?.is_active?'checked':''}><span>${esc(item.name)}${item.builtIn?'':' <small>(additional)</small>'}</span></label>`).join('');
 }
 function setAllSubjectSelections(checked){
  document.querySelectorAll('#schoolSubjectChoices input[type="checkbox"]').forEach(input=>input.checked=checked);
