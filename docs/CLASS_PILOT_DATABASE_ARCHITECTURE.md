@@ -3,18 +3,32 @@
 **Repository:** `edmondchinyamu7/class-attendance`  
 **Supabase project:** `ClassPilot` (`vofaqjpndpydhszfntnk`)  
 **Audit date:** 16 November 2026  
-**Status:** Design and read-only audit only. No database schema, RLS policy, Edge Function, or application code was changed during this audit.
+**Status:** Audit and migration-baseline recovery completed. Six existing migrations have now been restored to GitHub from the live Supabase migration ledger. No live database schema, RLS policy, Edge Function, or application code was changed by this documentation/recovery step.
 
 ## 1. Current environment
 
 - The frontend is a static HTML/CSS/JavaScript application using Supabase JS v2.
 - The frontend uses a Supabase publishable key. A publishable key is intended for client use; service-role/secret keys must remain server-side.
 - The live Supabase project is active and uses PostgreSQL 17.
-- Six migrations are recorded in the live Supabase project.
-- The repository currently has no checked-in `supabase/` migration/configuration directory. The live database therefore cannot yet be reproduced reliably from the repository alone.
+- Six migrations are recorded in the live Supabase project and are now committed under `supabase/migrations/` in the same timestamp order.
+- The SQL was recovered from `supabase_migrations.schema_migrations` and preserved as migration files. These files are a historical baseline; **do not replay them against the already-migrated live project**.
+- The migration history is now represented in GitHub, but a full clean-environment replay and schema-equivalence test have not yet been completed. Add Supabase CLI configuration and verify against a disposable development project before claiming reproducibility.
 - An active `classpilot-account-management` Edge Function exists (version 4). Its deployment has JWT verification disabled at the gateway, while protected parent/teacher actions manually extract and validate the bearer token with Supabase Auth. Public school registration is a separate unauthenticated action.
 
-## 2. Existing database foundation
+## 2. Restored migration baseline
+
+The following six migration files have been committed to GitHub:
+
+1. `20261113052159_classpilot_school_data_and_rls.sql`
+2. `20261113060247_classpilot_school_admin_foundation.sql`
+3. `20261114192334_add_parent_email_to_student_enrollment.sql`
+4. `20261114201057_classpilot_subject_enrollment_teacher_assignments.sql`
+5. `20261114201248_classpilot_teacher_rls_nonrecursive_access.sql`
+6. `20261114201338_classpilot_school_admin_teacher_profile_visibility.sql`
+
+The SQL statements were retrieved from the live Supabase migration ledger, not reconstructed from memory. The migration files represent changes already applied to the connected project. They were **not** run again during this task. The agreed product scope and previous updates remain documented in `docs/CLASS_PILOT_PRODUCT_SPEC.md`.
+
+## 3. Existing database foundation
 
 The live `public` schema currently contains these 11 tables:
 
@@ -36,7 +50,7 @@ RLS is enabled on all 11 listed tables. The existing policies include school-adm
 
 This is a useful foundation. Preserve it and evolve it through reviewed migrations rather than replacing it wholesale.
 
-## 3. Findings that need attention
+## 4. Findings that need attention
 
 ### Security and account lifecycle
 
@@ -65,7 +79,7 @@ Supabase's performance advisor reported:
 
 These are optimization findings, not proof that cross-school access is currently possible. RLS policies still require role-by-role adversarial tests.
 
-## 4. Recommended target architecture
+## 5. Recommended target architecture
 
 ### Core identity and tenancy
 
@@ -107,7 +121,7 @@ Create dedicated tables and policies for:
 
 Health, MSCE and discipline records should use stricter access paths than general student records. Use private storage buckets for sensitive documents, short-lived signed URLs, and explicit authorization checks.
 
-## 5. RLS authorization matrix
+## 6. RLS authorization matrix
 
 | Resource | School admin | Teacher | Parent | Student |
 |---|---|---|---|---|
@@ -124,9 +138,9 @@ Health, MSCE and discipline records should use stricter access paths than genera
 
 The matrix is the target policy baseline. It does not imply that every module or permission is implemented today.
 
-## 6. Migration and implementation sequence
+## 7. Migration and implementation sequence
 
-1. **Reproducibility:** retrieve the live migration history and schema into version-controlled `supabase/migrations/`; confirm the checked-in baseline matches the live project before changing it.
+1. **Reproducibility:** add Supabase CLI configuration, replay the six baseline migrations in a disposable development project, and compare its schema/RLS policies with the live project. Do not replay the baseline against the production project.
 2. **Security hardening:** leaked-password protection, verified school-admin email, CORS allowlist, registration abuse controls, and tests for current RLS boundaries.
 3. **Identity and school structure:** add student auth linkage, student profile fields, normalized classes, academic years, terms and historical enrolments.
 4. **Results redesign:** add term/year references and publication controls; create and test the separate MSCE boundary.
@@ -135,7 +149,7 @@ The matrix is the target policy baseline. It does not imply that every module or
 7. **School resources:** library, inventory, maintenance and digital ID verification.
 8. **Release verification:** test cross-school isolation, parent-child isolation, teacher assignment boundaries, admin-only writes, student self-access, confidential MSCE denial, and dashboard calendar rules using separate test accounts for each role.
 
-## 7. Mandatory tests before release
+## 8. Mandatory tests before release
 
 - A user from School A cannot read, insert, update or delete School B records, even by changing IDs in a request.
 - A parent cannot read a child who is not linked to that parent, including through nested relations, reports, storage paths or exports.
@@ -148,6 +162,6 @@ The matrix is the target policy baseline. It does not imply that every module or
 - Privileged Edge Functions verify the caller and role on the server; no service-role key is shipped to the browser.
 - Notifications, storage, exports and scheduled tasks are tested independently before being described as operational.
 
-## 8. Immediate next implementation task
+## 9. Immediate next implementation task
 
-First make the current Supabase database reproducible in GitHub by bringing the six existing migrations into the repository and reconciling them with the live schema. Then harden school registration and Auth settings. Do not add the full module schema in one large migration.
+Next, verify the restored baseline in a disposable Supabase development project, add a repeatable local migration workflow, and compare its schema and RLS policies with the connected live project. Then harden school registration and Auth settings. Keep the previously agreed ClassPilot requirements as the implementation target; build them in small reviewed migrations rather than one large migration.
