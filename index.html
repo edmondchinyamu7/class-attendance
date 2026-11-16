@@ -425,96 +425,36 @@
   <div class="modalback" id="resultModal">
    <div class="modal">
     <div class="modalhead">
-     <h3>
-      Add academic result
-     </h3>
-     <button class="close" onclick="closeModal('resultModal')">
-      ×
-     </button>
+     <h3>Enter / edit student results</h3>
+     <button class="close" onclick="closeModal('resultModal')">×</button>
     </div>
     <form id="resultForm">
      <div class="formgrid">
       <div class="formrow full">
-       <label>
-        Student
-       </label>
-       <select id="resultStudent" name="studentId">
+       <label for="resultStudent">Student</label>
+       <select id="resultStudent" name="studentId" required></select>
+      </div>
+      <div class="formrow">
+       <label for="resultFormLevel">Form</label>
+       <select id="resultFormLevel" name="form" required>
+        <option>Form 1</option><option>Form 2</option><option>Form 3</option><option>Form 4</option>
        </select>
       </div>
       <div class="formrow">
-       <label>
-        Subject
-       </label>
-       <select name="subject">
-        <option>
-         Mathematics
-        </option>
-        <option>
-         English
-        </option>
-        <option>
-         Physics
-        </option>
-        <option>
-         Biology
-        </option>
-        <option>
-         Chemistry
-        </option>
-        <option>
-         Geography
-        </option>
-       </select>
-      </div>
-      <div class="formrow">
-       <label>
-        Form
-       </label>
-       <select name="form">
-        <option>
-         Form 1
-        </option>
-        <option>
-         Form 2
-        </option>
-        <option>
-         Form 3
-        </option>
-        <option>
-         Form 4
-        </option>
-       </select>
-      </div>
-      <div class="formrow">
-       <label>
-        Term
-       </label>
-       <select name="term">
-        <option>
-         Term 1
-        </option>
-        <option>
-         Term 2
-        </option>
-        <option>
-         Term 3
-        </option>
+       <label for="resultTerm">Term</label>
+       <select id="resultTerm" name="term" required>
+        <option>Term 1</option><option>Term 2</option><option>Term 3</option>
        </select>
       </div>
       <div class="formrow full">
-       <label>
-        Score (0–100)
-       </label>
-       <input max="100" min="0" name="score" required="" type="number"/>
+       <label>Subject scores</label>
+       <div id="resultSubjectInputs" class="result-subject-inputs"></div>
+       <small class="smallmuted">All subjects are loaded from this student's enrollment. Enter the available marks, then save them together. Existing marks for the same form and term will be updated.</small>
       </div>
      </div>
      <div class="modalactions">
-      <button class="btn" onclick="closeModal('resultModal')" type="button">
-       Cancel
-      </button>
-      <button class="btn primary">
-       Save result
-      </button>
+      <button class="btn" onclick="closeModal('resultModal')" type="button">Cancel</button>
+      <button class="btn primary" type="submit">Save all subject results</button>
      </div>
     </form>
    </div>
