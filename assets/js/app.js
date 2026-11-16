@@ -55,12 +55,24 @@ function toast(s){let t=document.getElementById('toast');t.textContent=s;t.class
 const DEFAULT_GRADING_SCALE=[{grade_label:'A',min_score:80,max_score:100,description:'Excellent',sort_order:1},{grade_label:'B',min_score:70,max_score:79,description:'Very good',sort_order:2},{grade_label:'C',min_score:60,max_score:69,description:'Good',sort_order:3},{grade_label:'D',min_score:50,max_score:59,description:'Satisfactory',sort_order:4},{grade_label:'F',min_score:0,max_score:49,description:'Needs improvement',sort_order:5}];
 function gradeForScore(score){const value=Math.round(Number(score));const scale=gradeScales.length?gradeScales:DEFAULT_GRADING_SCALE;const band=scale.find(x=>value>=Number(x.min_score)&&value<=Number(x.max_score));return band?.grade_label||'—'}
 const DEFAULT_SCHOOL_SUBJECTS=['English','Maths','Chichewa','Bible Knowledge','Physics','Chemistry','Social Studies','Agriculture','Biology','Geography','History'];
+// Optional subjects are available in the catalogue, but a school only activates the ones it offers.
+const ADDITIONAL_MALAWI_SUBJECTS=[
+ 'Additional Mathematics','Business and Financial Studies','Business Studies','Computer Studies','Creative Arts',
+ 'French','Kiswahili','Arabic','Mandarin (Chinese)','Sign Language','Religious and Moral Education',
+ 'Islamic Education','Christian Education','Life Skills','Home Economics','Physical Education',
+ 'Sports Science','Sports and Recreation','Media Technology','Technical Studies','Technical Drawing (CAD)',
+ 'Information and Communication Technology (ICT)','Integrated Science','Material Science',
+ 'Carpentry and Joinery','Welding and Fabrication','Human Ecology','Fashion and Fabrics','Food and Nutrition',
+ 'Electrical Installation','Motorcycle Mechanics','Plumbing','Travel and Tourism','Fine Arts','Performing Arts',
+ 'Civics','Social and Life Studies','Woodwork','Metalwork','Clothing and Textiles'
+];
 function renderSubjectChoices(){
  const host=document.getElementById('schoolSubjectChoices');
  if(!host)return;
  const defaults=DEFAULT_SCHOOL_SUBJECTS.map(name=>({name,record:allSchoolSubjects.find(s=>s.subject_name.toLowerCase()===name.toLowerCase()),builtIn:true}));
- const extras=allSchoolSubjects.filter(s=>!DEFAULT_SCHOOL_SUBJECTS.some(name=>name.toLowerCase()===s.subject_name.toLowerCase())).map(record=>({name:record.subject_name,record,builtIn:false}));
- host.innerHTML=[...defaults,...extras].map(item=>`<label class="subject-option"><input type="checkbox" name="schoolSubjects" data-subject-name="${esc(item.name)}" ${item.record?.is_active?'checked':''}><span>${esc(item.name)}${item.builtIn?'':' <small>(additional)</small>'}</span></label>`).join('');
+ const extraNames=[...new Set([...ADDITIONAL_MALAWI_SUBJECTS,...allSchoolSubjects.filter(s=>!DEFAULT_SCHOOL_SUBJECTS.some(name=>name.toLowerCase()===s.subject_name.toLowerCase())).map(s=>s.subject_name)])];
+ const extras=extraNames.map(name=>({name,record:allSchoolSubjects.find(s=>s.subject_name.toLowerCase()===name.toLowerCase()),builtIn:false}));
+ host.innerHTML=[...defaults,...extras].map(item=>`<label class="subject-option"><input type="checkbox" name="schoolSubjects" data-subject-name="${esc(item.name)}" ${item.record?.is_active?'checked':''}><span>${esc(item.name)}${item.builtIn?'':' <small>(optional)</small>'}</span></label>`).join('');
 }
 function setAllSubjectSelections(checked){
  document.querySelectorAll('#schoolSubjectChoices input[type="checkbox"]').forEach(input=>input.checked=checked);
