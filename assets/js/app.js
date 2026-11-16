@@ -226,7 +226,8 @@ document.getElementById('resultForm').addEventListener('submit',async e=>{
 });
 
 
-document.getElementById('gradingScaleForm').addEventListener('submit',async e=>{
+document.addEventListener('submit',async e=>{
+ if(e.target.id!=='gradingScaleForm')return;
  e.preventDefault();
  if(currentUser?.role!=='school_admin')return toast('Only the school administrator can change grading settings.');
  const rows=Array.from({length:5},(_,i)=>{const n=i+1;return {school_id:currentUser.schoolId,sort_order:n,grade_label:document.querySelector(`[data-grade-label="${n}"]`).value.trim(),min_score:Number(document.querySelector(`[data-grade-min="${n}"]`).value),max_score:Number(document.querySelector(`[data-grade-max="${n}"]`).value),description:document.querySelector(`[data-grade-description="${n}"]`).value.trim(),updated_at:new Date().toISOString()}});
