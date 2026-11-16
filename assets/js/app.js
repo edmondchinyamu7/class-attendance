@@ -1,7 +1,7 @@
 const SUPABASE_URL='https://vofaqjpndpydhszfntnk.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_TqJdqqgAfUo3gyWxSjPIKA_GpdusHVr';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-let students=[], attendance={}, history=[], lessons=[], results=[], schoolSubjects=[], enrolledSubjects=[], teacherAssignments=[], teacherProfiles=[], gradeScales=[];
+let students=[], attendance={}, history=[], lessons=[], results=[], schoolSubjects=[], allSchoolSubjects=[], enrolledSubjects=[], teacherAssignments=[], teacherProfiles=[], gradeScales=[];
 let page='overview', searchTerm='', classFilter='All classes', statusFilter='All statuses';
 let selectedResultStudent='', selectedResultForm='Form 1', selectedResultTerm='Term 1', resultModalContext=null;
 let currentUser=null;
@@ -17,14 +17,14 @@ async function loadCloudData(){
   supabaseClient.from('attendance').select('id,student_id,attendance_date,status'),
   supabaseClient.from('lesson_notes').select('id,subject,class_name,topic,resource_url,instructions,created_at').order('created_at',{ascending:false}),
   supabaseClient.from('academic_results').select('id,student_id,subject,form,term,score,created_at').order('created_at',{ascending:false}),
-  supabaseClient.from('school_subjects').select('id,subject_name,is_active').eq('is_active',true).order('subject_name'),
+  supabaseClient.from('school_subjects').select('id,subject_name,is_active').eq('school_id',currentUser.schoolId).order('subject_name'),
   supabaseClient.from('student_subjects').select('id,student_id,school_subject_id'),
   supabaseClient.from('teacher_assignments').select('id,teacher_user_id,class_name,school_subject_id,school_subjects(subject_name)'),
   supabaseClient.from('profiles').select('id,full_name,role').eq('school_id',currentUser.schoolId),
   supabaseClient.from('school_grading_scales').select('id,grade_label,min_score,max_score,description,sort_order').eq('school_id',currentUser.schoolId).order('sort_order')
  ]);
  for(const x of [st,at,le,re,subjectsResult,enrollmentResult,assignmentsResult,profilesResult,gradingResult])if(x.error)throw x.error;
- schoolSubjects=subjectsResult.data||[];enrolledSubjects=enrollmentResult.data||[];teacherAssignments=assignmentsResult.data||[];teacherProfiles=(profilesResult.data||[]).filter(p=>p.role==='teacher');gradeScales=gradingResult.data||[];
+ allSchoolSubjects=subjectsResult.data||[];schoolSubjects=allSchoolSubjects.filter(x=>x.is_active);enrolledSubjects=enrollmentResult.data||[];teacherAssignments=assignmentsResult.data||[];teacherProfiles=(profilesResult.data||[]).filter(p=>p.role==='teacher');gradeScales=gradingResult.data||[];
  students=(st.data||[]).map(x=>({dbId:x.id,id:x.student_code,name:x.full_name,className:x.class_name,phone:x.phone||'',parent:x.parent_name||'',parentPhone:x.parent_phone||'',parentEmail:x.parent_email||''}));
  const byDbId=new Map(students.map(x=>[x.dbId,x.id]));
  attendance={};history=[];
@@ -41,7 +41,7 @@ async function applyRoleAccess(){
  document.getElementById('sideAvatar').textContent=initialsText;document.getElementById('topAvatar').textContent=initialsText;
  document.getElementById('topName').textContent=currentUser.name;document.getElementById('topRole').textContent=currentUser.role.replace('_',' '); document.getElementById('quickAddBtn').style.display=currentUser.role==='school_admin'?'inline-grid':'none'; page=currentUser.role==='parent'?'parent':'overview';render();
 }
-async function logout(){await supabaseClient.auth.signOut();currentUser=null;students=[];attendance={};lessons=[];results=[];document.getElementById('mainApp').classList.add('hidden');document.getElementById('loginScreen').style.display='grid';document.getElementById('loginForm').reset();document.getElementById('loginError').classList.remove('show')}document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),email=String(f.get('email')).trim().toLowerCase(),password=String(f.get('password'));const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Signing in…';try{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;const user=data.user;const role=user.app_metadata?.role;if(f.get('role')!==role)throw new Error('Choose the correct account type for this email.');currentUser=user;await loadCloudData();document.getElementById('loginScreen').style.display='none';document.getElementById('mainApp').classList.remove('hidden');await applyRoleAccess()}catch(err){await supabaseClient.auth.signOut();currentUser=null;showLoginError(err.message||'Unable to sign in.')}finally{btn.disabled=false;btn.textContent='Sign in securely →'}});
+async function logout(){await supabaseClient.auth.signOut();currentUser=null;students=[];attendance={};lessons=[];results=[];schoolSubjects=[];allSchoolSubjects=[];document.getElementById('mainApp').classList.add('hidden');document.getElementById('loginScreen').style.display='grid';document.getElementById('loginForm').reset();document.getElementById('loginError').classList.remove('show')}document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),email=String(f.get('email')).trim().toLowerCase(),password=String(f.get('password'));const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Signing in…';try{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;const user=data.user;const role=user.app_metadata?.role;if(f.get('role')!==role)throw new Error('Choose the correct account type for this email.');currentUser=user;await loadCloudData();document.getElementById('loginScreen').style.display='none';document.getElementById('mainApp').classList.remove('hidden');await applyRoleAccess()}catch(err){await supabaseClient.auth.signOut();currentUser=null;showLoginError(err.message||'Unable to sign in.')}finally{btn.disabled=false;btn.textContent='Sign in securely →'}});
 
 const todayKey=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
 function save(){} // Cloud changes are written directly to Supabase; no sensitive school data is cached in localStorage.
@@ -54,6 +54,17 @@ function fmtDate(d){return new Date(d).toLocaleDateString(undefined,{day:'numeri
 function toast(s){let t=document.getElementById('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
 const DEFAULT_GRADING_SCALE=[{grade_label:'A',min_score:80,max_score:100,description:'Excellent',sort_order:1},{grade_label:'B',min_score:70,max_score:79,description:'Very good',sort_order:2},{grade_label:'C',min_score:60,max_score:69,description:'Good',sort_order:3},{grade_label:'D',min_score:50,max_score:59,description:'Satisfactory',sort_order:4},{grade_label:'F',min_score:0,max_score:49,description:'Needs improvement',sort_order:5}];
 function gradeForScore(score){const value=Math.round(Number(score));const scale=gradeScales.length?gradeScales:DEFAULT_GRADING_SCALE;const band=scale.find(x=>value>=Number(x.min_score)&&value<=Number(x.max_score));return band?.grade_label||'—'}
+const DEFAULT_SCHOOL_SUBJECTS=['English','Maths','Chichewa','Bible Knowledge','Physics','Chemistry','Social Studies','Agriculture','Biology','Geography','History'];
+function renderSubjectChoices(){
+ const host=document.getElementById('schoolSubjectChoices');
+ if(!host)return;
+ const defaults=DEFAULT_SCHOOL_SUBJECTS.map(name=>({name,record:allSchoolSubjects.find(s=>s.subject_name.toLowerCase()===name.toLowerCase()),builtIn:true}));
+ const extras=allSchoolSubjects.filter(s=>!DEFAULT_SCHOOL_SUBJECTS.some(name=>name.toLowerCase()===s.subject_name.toLowerCase())).map(record=>({name:record.subject_name,record,builtIn:false}));
+ host.innerHTML=[...defaults,...extras].map(item=>\`<label class="subject-option"><input type="checkbox" name="schoolSubjects" data-subject-name="\${esc(item.name)}" \${item.record?.is_active?'checked':''}><span>\${esc(item.name)}\${item.builtIn?'':' <small>(additional)</small>'}</span></label>\`).join('');
+}
+function setAllSubjectSelections(checked){
+ document.querySelectorAll('#schoolSubjectChoices input[type="checkbox"]').forEach(input=>input.checked=checked);
+}
 function openModal(id,studentCode='',formValue=selectedResultForm,termValue=selectedResultTerm){
  if(id==='resultModal'){
   if(currentUser?.role!=='school_admin')return toast('Only the school administrator can enter or edit results.');
@@ -64,6 +75,7 @@ function openModal(id,studentCode='',formValue=selectedResultForm,termValue=sele
   document.getElementById('resultTerm').value=termValue;
   renderResultSubjectInputs();
  }
+ if(id==='subjectModal')renderSubjectChoices();
  if(id==='studentModal'){
   document.getElementById('studentSubjects').innerHTML=schoolSubjects.map(s=>`<option value="${s.id}">${esc(s.subject_name)}</option>`).join('');
   if(!schoolSubjects.length)toast('Configure your school subjects before enrolling a student.');
@@ -192,7 +204,23 @@ function exportCSV(type){let rows=[],filename=type+'-'+todayKey()+'.csv';if(type
 async function editStudent(id){let s=students.find(x=>x.id===id);if(!s)return;let name=prompt('Student name',s.name);if(name===null)return;if(!name.trim())return toast('Name cannot be empty.');let cls=prompt('Class',s.className);if(cls===null)return;let parent=prompt('Parent / guardian name',s.parent||'');if(parent===null)return;let parentPhone=prompt('Parent phone number',s.parentPhone||'');if(parentPhone===null)return;let parentEmail=prompt('Parent email',s.parentEmail||'');if(parentEmail===null)return;if(!parent.trim()||!parentPhone.trim()||!parentEmail.trim())return toast('Complete the parent name, phone and email so the parent can be verified.');const updates={full_name:name.trim(),class_name:cls.trim()||s.className,parent_name:parent.trim(),parent_phone:parentPhone.trim(),parent_email:parentEmail.trim().toLowerCase()};const {error}=await supabaseClient.from('students').update(updates).eq('id',s.dbId);if(error)return toast(error.message);s.name=updates.full_name;s.className=updates.class_name;s.parent=updates.parent_name;s.parentPhone=updates.parent_phone;s.parentEmail=updates.parent_email;render();toast('Student and parent enrollment details updated.')}
 async function deleteLesson(i){if(confirm('Delete this lesson note?')){const item=lessons[i];const {error}=await supabaseClient.from('lesson_notes').delete().eq('id',item.dbId);if(error)return toast(error.message);lessons.splice(i,1);render();toast('Lesson note deleted.')}}
 document.getElementById('studentForm').addEventListener('submit',async e=>{e.preventDefault();let f=new FormData(e.target),id=String(f.get('id')||'STU-'+String(Date.now()).slice(-6)).trim();if(students.some(s=>s.id===id))return toast('That student ID already exists.');const subjectIds=[...document.getElementById('studentSubjects').selectedOptions].map(o=>o.value);if(!subjectIds.length)return toast('Select at least one subject for this student.');const payload={school_id:currentUser.schoolId,student_code:id,full_name:String(f.get('name')).trim(),class_name:f.get('className'),phone:f.get('phone'),parent_name:f.get('parent'),parent_phone:f.get('parentPhone'),parent_email:String(f.get('parentEmail')||'').trim().toLowerCase()};const {data,error}=await supabaseClient.from('students').insert(payload).select('id').single();if(error)return toast(error.message);const links=subjectIds.map(school_subject_id=>({school_id:currentUser.schoolId,student_id:data.id,school_subject_id}));const {error:linkError}=await supabaseClient.from('student_subjects').insert(links);if(linkError){await supabaseClient.from('students').delete().eq('id',data.id);return toast('Student was not saved because subject enrollment failed: '+linkError.message)}students.push({dbId:data.id,id,name:payload.full_name,className:payload.class_name,phone:payload.phone,parent:payload.parent_name,parentPhone:payload.parent_phone,parentEmail:payload.parent_email});enrolledSubjects.push(...links);e.target.reset();closeModal('studentModal');render();toast('Student and subject enrollment saved.')});
-document.getElementById('subjectForm').addEventListener('submit',async e=>{e.preventDefault();const selected=[...document.getElementById('schoolSubjectChoices').selectedOptions].map(o=>o.value);if(!selected.length)return toast('Select at least one subject.');const existing=new Set(schoolSubjects.map(s=>s.subject_name.toLowerCase()));const rows=selected.filter(name=>!existing.has(name.toLowerCase())).map(subject_name=>({school_id:currentUser.schoolId,subject_name}));if(!rows.length)return toast('All selected subjects are already configured.');const {data,error}=await supabaseClient.from('school_subjects').insert(rows).select('id,subject_name,is_active');if(error)return toast(error.message);schoolSubjects.push(...(data||[]));schoolSubjects.sort((a,b)=>a.subject_name.localeCompare(b.subject_name));e.target.reset();closeModal('subjectModal');render();toast('School subjects saved.');});
+document.getElementById('subjectForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ if(currentUser?.role!=='school_admin')return toast('Only the school administrator can change school subjects.');
+ const selectedSubjects=[...document.querySelectorAll('#schoolSubjectChoices input[type="checkbox"]:checked')].map(input=>input.dataset.subjectName);
+ if(!selectedSubjects.length)return toast('Keep at least one subject active for student enrollment.');
+ const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Saving subjects…';
+ try{
+  const {data,error}=await supabaseClient.functions.invoke('classpilot-account-management',{body:{action:'save_school_subjects',selectedSubjects}});
+  if(error){let detail='';try{const responseBody=await error.context.json();detail=responseBody.error||responseBody.message||''}catch{}throw new Error(detail||error.message||'Could not save school subjects.')}
+  if(data?.error)throw new Error(data.error);
+  const {data:subjectRows,error:subjectError}=await supabaseClient.from('school_subjects').select('id,subject_name,is_active').eq('school_id',currentUser.schoolId).order('subject_name');
+  if(subjectError)throw subjectError;
+  allSchoolSubjects=subjectRows||[];schoolSubjects=allSchoolSubjects.filter(subject=>subject.is_active);
+  closeModal('subjectModal');render();toast(data?.message||'School subjects updated.');
+ }catch(err){toast(err.message||'Could not save school subjects.')}
+ finally{btn.disabled=false;btn.textContent='Save selected subjects'}
+});
 document.getElementById('lessonForm').addEventListener('submit',async e=>{e.preventDefault();let f=new FormData(e.target),payload={school_id:currentUser.schoolId,subject:f.get('subject'),class_name:f.get('className'),topic:f.get('topic'),resource_url:f.get('file'),instructions:f.get('description'),created_by:currentUser.id};const {data,error}=await supabaseClient.from('lesson_notes').insert(payload).select('id,created_at').single();if(error)return toast(error.message);lessons.unshift({dbId:data.id,subject:payload.subject,className:payload.class_name,topic:payload.topic,file:payload.resource_url,description:payload.instructions,date:data.created_at});e.target.reset();closeModal('lessonModal');render();toast('Lesson note saved to Supabase.')});
 document.getElementById('resultForm').addEventListener('submit',async e=>{
  e.preventDefault();
