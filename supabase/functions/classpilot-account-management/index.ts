@@ -13,6 +13,18 @@ const DEFAULT_SCHOOL_SUBJECTS = [
   "English", "Maths", "Chichewa", "Bible Knowledge", "Physics", "Chemistry",
   "Social Studies", "Agriculture", "Biology", "Geography", "History"
 ];
+// Wider Malawi secondary-school subject catalogue. These remain optional until a school admin selects them.
+const ADDITIONAL_MALAWI_SUBJECTS = [
+  "Additional Mathematics", "Business and Financial Studies", "Business Studies", "Computer Studies", "Creative Arts",
+  "French", "Kiswahili", "Arabic", "Mandarin (Chinese)", "Sign Language", "Religious and Moral Education",
+  "Islamic Education", "Christian Education", "Life Skills", "Home Economics", "Physical Education",
+  "Sports Science", "Sports and Recreation", "Media Technology", "Technical Studies", "Technical Drawing (CAD)",
+  "Information and Communication Technology (ICT)", "Integrated Science", "Material Science",
+  "Carpentry and Joinery", "Welding and Fabrication", "Human Ecology", "Fashion and Fabrics", "Food and Nutrition",
+  "Electrical Installation", "Motorcycle Mechanics", "Plumbing", "Travel and Tourism", "Fine Arts", "Performing Arts",
+  "Civics", "Social and Life Studies", "Woodwork", "Metalwork", "Clothing and Textiles"
+];
+const AVAILABLE_SCHOOL_SUBJECTS = [...DEFAULT_SCHOOL_SUBJECTS, ...ADDITIONAL_MALAWI_SUBJECTS];
 const normalizePhone = (value: unknown) => {
   const digits = String(value || "").replace(/\D/g, "");
   return digits.startsWith("0") ? "265" + digits.slice(1) : digits;
@@ -71,7 +83,7 @@ Deno.serve(async (req) => {
       const { data: currentSubjects, error: currentError } = await admin.from("school_subjects")
         .select("id,subject_name").eq("school_id", schoolId);
       if (currentError) return reply({ error: "Could not load your school's subject list." }, 500);
-      const allowedNames = new Set([...DEFAULT_SCHOOL_SUBJECTS, ...(currentSubjects || []).map((item: any) => item.subject_name)]);
+      const allowedNames = new Set([...AVAILABLE_SCHOOL_SUBJECTS, ...(currentSubjects || []).map((item: any) => item.subject_name)]);
       if (selectedSubjects.some((name) => !allowedNames.has(name))) {
         return reply({ error: "One or more selected subjects are not available in your school's subject catalogue." }, 400);
       }
