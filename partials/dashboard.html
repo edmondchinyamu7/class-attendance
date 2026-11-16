@@ -1,0 +1,156 @@
+<!-- Main dashboard shell and navigation -->
+<div class="app hidden" id="mainApp">
+   <aside class="sidebar" id="sidebar">
+    <div class="brand">
+     <div class="brandmark">
+      ✦
+     </div>
+     <div>
+      <strong>
+       ClassPilot
+      </strong>
+      <small>
+       SCHOOL MANAGEMENT
+      </small>
+     </div>
+    </div>
+    <div class="navlabel">
+     Workspace
+    </div>
+    <nav class="nav" id="nav">
+     <button class="active" data-page="overview">
+      <span>
+       ▦
+      </span>
+      Overview
+     </button>
+     <button data-page="attendance">
+      <span>
+       ◷
+      </span>
+      Attendance
+     </button>
+     <button data-page="students">
+      <span>
+       ♙
+      </span>
+      Students
+     </button>
+     <button data-page="lessons">
+      <span>
+       ▤
+      </span>
+      Lesson notes
+     </button>
+     <button data-page="results">
+      <span>
+       ▥
+      </span>
+      Academic results
+     </button>
+     <button data-page="reports">
+      <span>
+       ⌁
+      </span>
+      Reports &amp; exports
+     </button>
+     <button data-page="academics">
+      <span>
+       ▣
+      </span>
+      Subjects &amp; teachers
+     </button>
+     <button data-page="grading">
+      <span>
+       ◈
+      </span>
+      Grading scale
+     </button>
+     <button data-page="parent">
+      <span>
+       ♡
+      </span>
+      Parent dashboard
+     </button>
+    </nav>
+    <div class="sidebottom">
+     A clearer view of every school day.
+     <div class="profile">
+      <div class="avatar" id="sideAvatar">
+       TC
+      </div>
+      <div>
+       <b id="sideName">
+        Teacher
+       </b>
+       <small id="sideRole">
+        Teacher account
+       </small>
+      </div>
+     </div>
+    </div>
+   </aside>
+   <main class="main">
+    <header class="topbar">
+     <div style="display:flex;align-items:center;gap:12px">
+      <button class="iconbtn mobilemenu" id="menuBtn">
+       ☰
+      </button>
+      <div class="crumb">
+       Workspace /
+       <b id="crumb">
+        Overview
+       </b>
+      </div>
+     </div>
+     <div class="topright">
+      <span class="today" id="today">
+      </span>
+      <button class="iconbtn" id="quickAddBtn" onclick="openModal('studentModal')" title="Quick add">
+       ＋
+      </button>
+      <div class="user-chip">
+       <div class="avatar" id="topAvatar">
+        TC
+       </div>
+       <div>
+        <b id="topName">
+         Teacher
+        </b>
+        <small id="topRole">
+         Teacher
+        </small>
+       </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+       Log out
+      </button>
+     </div>
+    </header>
+    <div class="content">
+     <section class="pagehead">
+      <div>
+       <div class="eyebrow" id="eyebrow">
+        YOUR SCHOOL AT A GLANCE
+       </div>
+       <h1 id="pageTitle">
+        Good day, Administrator 👋
+       </h1>
+       <p id="pageDesc">
+        Here’s what’s happening across your classes today.
+       </p>
+      </div>
+      <div class="actions" id="headActions">
+       <button class="btn" onclick="exportCSV('students')">
+        ⇩ Export students
+       </button>
+       <button class="btn primary" onclick="openModal('studentModal')">
+        ＋ Add student
+       </button>
+      </div>
+     </section>
+     <div id="pageContent">
+     </div>
+    </div>
+   </main>
+  </div>
