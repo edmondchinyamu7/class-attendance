@@ -76,37 +76,22 @@
 <div class="modalback" id="subjectModal">
    <div class="modal">
     <div class="modalhead">
-     <h3>Configure school subjects</h3>
+     <h3>Manage school subjects</h3>
      <button class="close" onclick="closeModal('subjectModal')">×</button>
     </div>
     <form id="subjectForm">
      <div class="formrow full">
-      <label for="schoolSubjectChoices">Subjects offered by this school</label>
-      <select id="schoolSubjectChoices" name="subjects" multiple size="12" required>
-       <optgroup label="Languages">
-        <option>English</option><option>Chichewa</option><option>French</option>
-       </optgroup>
-       <optgroup label="Sciences and Agriculture">
-        <option>Biology</option><option>Chemistry</option><option>Physics</option><option>Agriculture</option>
-       </optgroup>
-       <optgroup label="Mathematics">
-        <option>Mathematics</option><option>Additional Mathematics</option>
-       </optgroup>
-       <optgroup label="Humanities and Social Sciences">
-        <option>Geography</option><option>History</option><option>Social Studies</option><option>Life Skills</option>
-       </optgroup>
-       <optgroup label="Business and Technology">
-        <option>Commerce</option><option>Accounting</option><option>Business Studies</option><option>Computer Studies</option>
-       </optgroup>
-       <optgroup label="Other common options">
-        <option>Bible Knowledge</option><option>Religious Education</option><option>Home Economics</option><option>Technical Drawing</option><option>General Science</option>
-       </optgroup>
-      </select>
-      <small class="smallmuted">Choose only subjects actually taught at your school. You can add more later.</small>
+      <label>Built-in Malawi secondary-school subjects</label>
+      <div class="subject-select-actions">
+       <button class="linkbtn" type="button" onclick="setAllSubjectSelections(true)">Select all</button>
+       <button class="linkbtn" type="button" onclick="setAllSubjectSelections(false)">Clear selection</button>
+      </div>
+      <div id="schoolSubjectChoices" class="subject-check-grid" aria-label="Select the subjects offered by this school"></div>
+      <small class="smallmuted">Tick several subjects and save once. Unticking a subject removes it from future enrolment choices while keeping existing student and academic history intact. You can change this list later.</small>
      </div>
      <div class="modalactions">
       <button class="btn" onclick="closeModal('subjectModal')" type="button">Cancel</button>
-      <button class="btn primary" type="submit">Save school subjects</button>
+      <button class="btn primary" type="submit">Save selected subjects</button>
      </div>
     </form>
    </div>
