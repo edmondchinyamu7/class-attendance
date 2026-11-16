@@ -74,8 +74,8 @@ Deno.serve(async (req) => {
       const schoolId = caller.app_metadata?.school_id;
       if (caller.app_metadata?.role !== "school_admin" || !schoolId) return reply({ error: "Only a school administrator can change school subjects." }, 403);
 
-      if (!Array.isArray(body.selectedSubjects) || body.selectedSubjects.length === 0 || body.selectedSubjects.length > 50) {
-        return reply({ error: "Select at least one subject. You can manage up to 50 subjects." }, 400);
+      if (!Array.isArray(body.selectedSubjects) || body.selectedSubjects.length === 0 || body.selectedSubjects.length > 100) {
+        return reply({ error: "Select at least one subject. You can manage up to 100 subjects." }, 400);
       }
       const selectedSubjects = [...new Set(body.selectedSubjects.map((value: unknown) => String(value || "").trim()).filter(Boolean))];
       if (!selectedSubjects.length) return reply({ error: "Select at least one subject." }, 400);
