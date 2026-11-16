@@ -830,3 +830,18 @@ button{
 .user-chip b{
     font-size:11px
 }
+
+
+/* Academic results: multi-subject entry and accessible score charts */
+.result-subject-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0 8px}
+.result-subject-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#f8faff}
+.result-subject-row label{font-size:11px;font-weight:700;color:var(--ink)}
+.result-subject-row input{width:112px;min-width:0;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+.result-chart{display:flex;align-items:flex-end;gap:12px;min-height:210px;overflow-x:auto;padding:16px 6px 8px;border-bottom:1px solid var(--line)}
+.result-chart-item{flex:0 0 68px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:190px;text-align:center}
+.result-chart-score{font-size:10px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.result-chart-track{height:130px;width:30px;display:flex;align-items:flex-end;background:#edf1f7;border-radius:8px 8px 3px 3px;overflow:hidden}
+.result-chart-bar{width:100%;min-height:3px;border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,#6f8cff,#4f6df5)}
+.result-chart-label{font-size:10px;font-weight:700;color:var(--ink);margin-top:8px;max-width:68px;overflow-wrap:anywhere}
+.result-chart-period{font-size:9px;color:var(--muted);margin-top:3px}
+@media(max-width:640px){.result-subject-inputs{grid-template-columns:1fr}.result-subject-row input{width:100px}.result-chart{gap:8px}}
