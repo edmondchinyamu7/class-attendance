@@ -1,0 +1,362 @@
+<!-- School, student, subject, lesson, results, teacher and parent dialogs -->
+<div class="modalback" id="studentModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>
+      Add a student
+     </h3>
+     <button class="close" onclick="closeModal('studentModal')">
+      ×
+     </button>
+    </div>
+    <form id="studentForm">
+     <div class="formgrid">
+      <div class="formrow">
+       <label>
+        Full name
+       </label>
+       <input name="name" placeholder="Student full name" required=""/>
+      </div>
+      <div class="formrow">
+       <label>
+        Student ID
+       </label>
+       <input name="id" placeholder="e.g. STU-010" required=""/>
+      </div>
+      <div class="formrow">
+       <label>
+        Class / Stream
+       </label>
+       <input name="className" placeholder="e.g. Form 2 Blue or Form 3A" required/>
+      </div>
+      <div class="formrow">
+       <label>
+        Phone
+       </label>
+       <input name="phone" placeholder="+265 ..." required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Parent / guardian name
+       </label>
+       <input name="parent" placeholder="Parent or guardian" required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Parent phone
+       </label>
+       <input name="parentPhone" placeholder="+265 ..." required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Parent email
+       </label>
+       <input name="parentEmail" placeholder="parent@example.com" type="email" required=""/>
+      </div>
+      <div class="formrow full">
+       <label for="studentSubjects">
+        Student subjects
+       </label>
+       <select id="studentSubjects" name="subjects" multiple required size="7"></select>
+       <small class="smallmuted">Select every subject this student is enrolled in. Only subjects offered by your school will appear.</small>
+      </div>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('studentModal')" type="button">
+       Cancel
+      </button>
+      <button class="btn primary">
+       Save student
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+
+<div class="modalback" id="subjectModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>Configure school subjects</h3>
+     <button class="close" onclick="closeModal('subjectModal')">×</button>
+    </div>
+    <form id="subjectForm">
+     <div class="formrow full">
+      <label for="schoolSubjectChoices">Subjects offered by this school</label>
+      <select id="schoolSubjectChoices" name="subjects" multiple size="12" required>
+       <optgroup label="Languages">
+        <option>English</option><option>Chichewa</option><option>French</option>
+       </optgroup>
+       <optgroup label="Sciences and Agriculture">
+        <option>Biology</option><option>Chemistry</option><option>Physics</option><option>Agriculture</option>
+       </optgroup>
+       <optgroup label="Mathematics">
+        <option>Mathematics</option><option>Additional Mathematics</option>
+       </optgroup>
+       <optgroup label="Humanities and Social Sciences">
+        <option>Geography</option><option>History</option><option>Social Studies</option><option>Life Skills</option>
+       </optgroup>
+       <optgroup label="Business and Technology">
+        <option>Commerce</option><option>Accounting</option><option>Business Studies</option><option>Computer Studies</option>
+       </optgroup>
+       <optgroup label="Other common options">
+        <option>Bible Knowledge</option><option>Religious Education</option><option>Home Economics</option><option>Technical Drawing</option><option>General Science</option>
+       </optgroup>
+      </select>
+      <small class="smallmuted">Choose only subjects actually taught at your school. You can add more later.</small>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('subjectModal')" type="button">Cancel</button>
+      <button class="btn primary" type="submit">Save school subjects</button>
+     </div>
+    </form>
+   </div>
+  </div>
+
+<div class="modalback" id="lessonModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>
+      Add lesson note
+     </h3>
+     <button class="close" onclick="closeModal('lessonModal')">
+      ×
+     </button>
+    </div>
+    <form id="lessonForm">
+     <div class="formgrid">
+      <div class="formrow">
+       <label>
+        Subject
+       </label>
+       <select name="subject">
+        <option>
+         Mathematics
+        </option>
+        <option>
+         English
+        </option>
+        <option>
+         Physics
+        </option>
+        <option>
+         Biology
+        </option>
+        <option>
+         Chemistry
+        </option>
+        <option>
+         Geography
+        </option>
+       </select>
+      </div>
+      <div class="formrow">
+       <label>
+        Class
+       </label>
+       <select name="className">
+        <option>
+         Form 2 Blue
+        </option>
+        <option>
+         Form 3 Green
+        </option>
+        <option>
+         Form 1 Red
+        </option>
+        <option>
+         Form 4 Gold
+        </option>
+       </select>
+      </div>
+      <div class="formrow full">
+       <label>
+        Topic
+       </label>
+       <input name="topic" placeholder="Lesson topic" required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        File name / resource link
+       </label>
+       <input name="file" placeholder="e.g. algebra-notes.pdf or https://..."/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Instructions
+       </label>
+       <textarea name="description" placeholder="What should students work on?"></textarea>
+      </div>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('lessonModal')" type="button">
+       Cancel
+      </button>
+      <button class="btn primary">
+       Save note
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+
+<div class="modalback" id="resultModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>Enter / edit student results</h3>
+     <button class="close" onclick="closeModal('resultModal')">×</button>
+    </div>
+    <form id="resultForm">
+     <div class="formgrid">
+      <div class="formrow full">
+       <label for="resultStudent">Student</label>
+       <select id="resultStudent" name="studentId" required></select>
+      </div>
+      <div class="formrow">
+       <label for="resultFormLevel">Form</label>
+       <select id="resultFormLevel" name="form" required>
+        <option>Form 1</option><option>Form 2</option><option>Form 3</option><option>Form 4</option>
+       </select>
+      </div>
+      <div class="formrow">
+       <label for="resultTerm">Term</label>
+       <select id="resultTerm" name="term" required>
+        <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+       </select>
+      </div>
+      <div class="formrow full">
+       <label>Subject scores</label>
+       <div id="resultSubjectInputs" class="result-subject-inputs"></div>
+       <small class="smallmuted">All subjects are loaded from this student's enrollment. Enter the available marks, then save them together. Existing marks for the same form and term will be updated.</small>
+      </div>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('resultModal')" type="button">Cancel</button>
+      <button class="btn primary" type="submit">Save all subject results</button>
+     </div>
+    </form>
+   </div>
+  </div>
+
+<div class="modalback" id="schoolSignupModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>
+      Register your school
+     </h3>
+     <button class="close" onclick="closeModal('schoolSignupModal')">
+      ×
+     </button>
+    </div>
+    <form id="schoolSignupForm">
+     <div class="formgrid">
+      <div class="formrow full">
+       <label>
+        School name
+       </label>
+       <input name="schoolName" placeholder="e.g. Central Secondary School" required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Coordinator full name
+       </label>
+       <input name="fullName" placeholder="Full name" required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        School email / administrator login
+       </label>
+       <input name="email" placeholder="school@example.com" required="" type="email"/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Password (minimum 10 characters)
+       </label>
+       <input autocomplete="new-password" minlength="10" name="password" required="" type="password"/>
+      </div>
+     </div>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('schoolSignupModal')" type="button">
+       Cancel
+      </button>
+      <button class="btn primary" type="submit">
+       Create school account
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+
+<div class="modalback" id="teacherModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>Invite teacher and assign class</h3>
+     <button class="close" onclick="closeModal('teacherModal')">×</button>
+    </div>
+    <form id="teacherForm">
+     <div class="formgrid">
+      <div class="formrow full"><label>Teacher full name</label><input name="fullName" required placeholder="Teacher full name"/></div>
+      <div class="formrow full"><label>Teacher phone</label><input name="phone" required placeholder="+265 ..."/></div>
+      <div class="formrow full"><label>Teacher email</label><input name="email" type="email" required placeholder="teacher@example.com"/></div>
+      <div class="formrow full"><label>Assigned class / Form</label><input name="className" required placeholder="e.g. Form 2 Blue"/></div>
+      <div class="formrow full"><label>Assigned subject</label><select id="teacherSubject" name="subjectId" required></select></div>
+     </div>
+     <p class="smallmuted">A secure email invitation will be sent so the teacher can create their own password. The teacher will only see students enrolled in this subject and class.</p>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('teacherModal')" type="button">Cancel</button>
+      <button class="btn primary" type="submit">Send teacher invitation</button>
+     </div>
+    </form>
+   </div>
+  </div>
+
+<div class="modalback" id="parentInviteModal">
+   <div class="modal">
+    <div class="modalhead">
+     <h3>
+      Register / link a parent
+     </h3>
+     <button class="close" onclick="closeModal('parentInviteModal')">
+      ×
+     </button>
+    </div>
+    <form id="parentInviteForm">
+     <div class="formgrid">
+      <div class="formrow full">
+       <label>
+        Parent full name
+       </label>
+       <input name="fullName" required=""/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Phone number
+       </label>
+       <input name="phone" placeholder="+265 ..."/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Parent email
+       </label>
+       <input name="email" required="" type="email"/>
+      </div>
+      <div class="formrow full">
+       <label>
+        Student ID
+       </label>
+       <input name="studentCode" placeholder="Enter the existing Student ID" required=""/>
+      </div>
+     </div>
+     <p class="smallmuted">
+      Parent name, phone number and email must match the details saved during student enrollment. A new parent receives a secure email invitation to set their own password. Existing parent accounts can link additional children using each child's Student ID.
+     </p>
+     <div class="modalactions">
+      <button class="btn" onclick="closeModal('parentInviteModal')" type="button">
+       Cancel
+      </button>
+      <button class="btn primary" type="submit">
+       Send invitation / link child
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
