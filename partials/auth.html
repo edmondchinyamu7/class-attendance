@@ -1,0 +1,65 @@
+<!-- ClassPilot authentication screen -->
+<section class="login-screen" id="loginScreen">
+   <div class="login-card">
+    <div class="login-brand">
+     <div class="brandmark">
+      ✦
+     </div>
+     <div>
+      <strong style="font:800 19px Manrope">
+       ClassPilot
+      </strong>
+      <small style="display:block;color:#8b97aa;font-size:9px;letter-spacing:1.5px;margin-top:2px">
+       SCHOOL MANAGEMENT
+      </small>
+     </div>
+    </div>
+    <h1>
+     Welcome back
+    </h1>
+    <p>
+     Sign in to continue to your teacher or parent dashboard.
+    </p>
+    <div class="login-error" id="loginError" role="alert">
+    </div>
+    <form id="loginForm">
+     <div class="formrow">
+      <label for="loginRole">
+       I am signing in as
+      </label>
+      <select id="loginRole" name="role">
+       <option value="school_admin">
+        School Administrator
+       </option>
+       <option value="teacher">
+        Teacher
+       </option>
+       <option value="parent">
+        Parent / Guardian
+       </option>
+      </select>
+     </div>
+     <div class="formrow">
+      <label for="loginEmail">
+       Email address
+      </label>
+      <input autocomplete="username" id="loginEmail" name="email" placeholder="name@example.com" required="" type="email"/>
+     </div>
+     <div class="formrow">
+      <label for="loginPassword">
+       Password
+      </label>
+      <input autocomplete="current-password" id="loginPassword" name="password" placeholder="Enter your password" required="" type="password"/>
+     </div>
+     <button class="btn primary login-submit" type="submit">
+      Sign in securely →
+     </button>
+    </form>
+    <p style="font-size:11px;color:#718096;margin:16px 0 0;text-align:center">
+     New school?
+     <button class="linkbtn" onclick="openModal('schoolSignupModal')" type="button">
+      Register your school
+     </button>
+    </p>
+   </div>
+  </section>
