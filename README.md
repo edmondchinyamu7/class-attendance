@@ -1,43 +1,57 @@
-# ClassPilot — School Management System
+# ClassPilot — Malawi Secondary School Management
 
-A separated, maintainable frontend structure for the existing ClassPilot application.
+A Next.js App Router + TypeScript + Tailwind starter for a multi-role secondary-school management system (Forms 1–4).
 
-## Project structure
+## Current branch
 
-```text
-ClassPilot_Professional/
-├── index.html
-├── assets/
-│   ├── css/
-│   │   └── styles.css
-│   └── js/
-│       └── app.js
-└── README.md
-```
+`feat/malawi-school-management-nextjs`
 
-## Documentation and database migrations
+## What is included in this first UI phase
 
-- [Product requirements and all previously agreed ClassPilot updates](docs/CLASS_PILOT_PRODUCT_SPEC.md)
-- [Database architecture and security audit](docs/CLASS_PILOT_DATABASE_ARCHITECTURE.md)
-- Supabase migration history is version-controlled in `supabase/migrations/`.
+- Responsive school dashboard with dark-blue, white and green styling.
+- Demo dashboard metrics: student count, term fees, attendance and top-performing students.
+- Twenty generated sample student records.
+- Searchable and filterable student directory.
+- Student registration modal with Form 1–4, streams A–C, guardian contact, district and day/boarding category.
+- Fee balance overview and MWK formatting.
+- Subject catalogue for English, Chichewa, Mathematics, Biology, Physics, Chemistry, Agriculture, Geography, History and Life Skills.
+- Attendance overview and school configuration for Government/Private plus independent Boarding/Day settings.
+- Role selector and English/Chichewa language toggle are UI previews, not authentication or translated content yet.
+- Health endpoint at `/api/health`.
 
-The six migration files were recovered from the connected Supabase migration ledger and committed in their original timestamp order. They document the database changes already applied to the live project. **Do not replay them against the same live database**; use them as the migration baseline for review, local setup and future forward-only changes.
+**Important:** this is a UI/demo foundation, not a production-ready school system. Demo changes are held in browser memory only. Authentication, role permissions, parent-child account linking, payment recording, real marks entry, report-card generation, image uploads, notifications, audit logs and production-grade database authorization are not yet implemented. Do not enter real student or parent information into the demo.
+
+## Stack
+
+- Next.js 15, React 19, TypeScript
+- Tailwind CSS
+- Neon Postgres using `@neondatabase/serverless`
+- Vercel Blob package included for a future server-side student-photo upload flow
+
+Vercel Postgres is no longer offered as a standalone database product. For a new Vercel deployment, provision Neon through the Vercel Marketplace and configure `DATABASE_URL`. The existing Supabase migrations and audit remain in `supabase/` and `docs/` as the historical database baseline; they are not automatically applied to Neon.
 
 ## Run locally
 
-Open `index.html` in a browser, or serve this folder with a local static web server. The app loads the Supabase JavaScript client from its CDN and uses the existing Supabase project configuration already present in `assets/js/app.js`.
+1. Install Node.js 20 or later.
+2. Copy `.env.example` to `.env.local`.
+3. Set `DATABASE_URL` to a Neon connection string (optional for the UI; required for the health check).
+4. Run:
 
-## Deployment
+```bash
+npm install
+npm run dev
+```
 
-For Vercel or GitHub Pages, deploy the contents of this folder. Keep `index.html` at the deployment root so the relative `assets/` paths resolve.
+Open http://localhost:3000.
 
-## Important security notes
+## Database setup
 
-- The browser file must contain only the Supabase publishable/anon key. Never put a service-role key or other server secret in `app.js`.
-- Enforce school and parent-child data boundaries with Supabase Row Level Security (RLS). Hiding a menu item is not an authorization control.
-- Teacher sign-in remains intentionally unavailable until the teacher provisioning flow and teacher-specific RLS policies are implemented and tested.
-- Parent invitations depend on the deployed `classpilot-account-management` Edge Function and correctly configured Auth email delivery / redirect settings.
+Review `db/schema.sql` and apply it only to a **new, empty Neon database**. It is a starter schema, not a migration to run against the existing Supabase project. Before production use, add verified authentication and enforce school/role/parent-child authorization on every server action and query. Do not expose database credentials to the browser.
 
-## Current scope
+## Vercel deployment
 
-The repository includes the existing frontend, the agreed product requirements, a database/security audit, and the six recorded Supabase migrations. The requirements document includes the previously agreed school registration, student/teacher/parent/student dashboards, subject enrolment, grading and results history, MSCE confidentiality, boarding/day-school calendar access, learning materials, attendance, timetable, fees, announcements, health, discipline, digital IDs, library, inventory, maintenance, reports, exports and parent documents. These are product requirements, not claims that every module is implemented. New database changes must be added as reviewed forward-only migrations and tested against role-specific RLS policies.
+Import this repository/branch into Vercel, configure `DATABASE_URL` and deploy. Student photographs should be uploaded through a server-side route using a private Blob store or controlled access strategy; never put privileged tokens in client code.
+
+## Existing Supabase work
+
+The `supabase/migrations/` directory records migrations already applied to the existing Supabase project. The audit in `docs/CLASS_PILOT_DATABASE_ARCHITECTURE.md` identifies security and data-model gaps. Do not replay those historical migrations against that same live database.
