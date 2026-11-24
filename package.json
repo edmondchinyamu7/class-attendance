@@ -6,16 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
     "@vercel/blob": "^1.1.1",
-    "@vercel/postgres": "^0.10.0",
     "lucide-react": "^0.468.0",
     "next": "^15.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "@neondatabase/serverless": "^1.0.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
