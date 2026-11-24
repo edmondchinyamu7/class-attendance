@@ -1,41 +1,54 @@
 # ClassPilot — Malawi Secondary School Management
 
-A Next.js App Router + TypeScript + Tailwind starter for a multi-role secondary-school management system (Forms 1–4).
+A Next.js App Router + TypeScript + Tailwind foundation for a multi-role secondary-school management system (Forms 1–4).
 
-## Current branch
+## Working branch
 
 `feat/malawi-school-management-nextjs`
 
-## What is included in this first UI phase
+## Included in this phase
 
-- Responsive school dashboard with dark-blue, white and green styling.
-- Demo dashboard metrics: student count, term fees, attendance and top-performing students.
+- Responsive dashboard UI and school configuration preview.
 - Twenty generated sample student records.
-- Searchable and filterable student directory.
-- Student registration modal with Form 1–4, streams A–C, guardian contact, district and day/boarding category.
-- Fee balance overview and MWK formatting.
-- Subject catalogue for English, Chichewa, Mathematics, Biology, Physics, Chemistry, Agriculture, Geography, History and Life Skills.
-- Attendance overview and school configuration for Government/Private plus independent Boarding/Day settings.
-- Role selector and English/Chichewa language toggle are UI previews, not authentication or translated content yet.
-- Health endpoint at `/api/health`.
+- Searchable/filterable student directory and registration preview.
+- Fees, attendance and subject catalogue preview.
+- Supabase SSR client utilities for browser and server.
+- Email/password sign-in through Supabase Auth.
+- Auth callback route for invitation/confirmation links.
+- Session refresh and protected-page redirect using Next.js middleware.
+- Sign-out action and Supabase configuration health endpoint.
+- Existing Supabase migrations and account-management Edge Function preserved.
 
-**Important:** this is a UI/demo foundation, not a production-ready school system. Demo changes are held in browser memory only. Authentication, role permissions, parent-child account linking, payment recording, real marks entry, report-card generation, image uploads, notifications, audit logs and production-grade database authorization are not yet implemented. Do not enter real student or parent information into the demo.
+**Demo warning:** dashboard totals and student records are sample data stored in the browser session. They are not yet loaded from or saved to Supabase. Do not enter real student data into the preview modules.
 
 ## Stack
 
-- Next.js 15, React 19, TypeScript
-- Tailwind CSS
-- Neon Postgres using `@neondatabase/serverless`
-- Vercel Blob package included for a future server-side student-photo upload flow
+- Next.js 15, React 19, TypeScript and Tailwind CSS.
+- Supabase Auth, PostgreSQL, Row Level Security and Storage.
+- Vercel hosting.
 
-Vercel Postgres is no longer offered as a standalone database product. For a new Vercel deployment, provision Neon through the Vercel Marketplace and configure `DATABASE_URL`. The existing Supabase migrations and audit remain in `supabase/` and `docs/` as the historical database baseline; they are not automatically applied to Neon.
+Supabase is the single source of truth. Do not configure Neon or run the removed Neon starter schema. The historical migrations under `supabase/migrations/` were applied to the existing Supabase project; do not replay them against that project.
+
+## Environment
+
+Copy `.env.example` to `.env.local` and set:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+```
+
+Use the project's publishable key in the browser. Never expose a Supabase secret/service-role key through a `NEXT_PUBLIC_` variable or browser bundle.
+
+## Supabase Auth configuration
+
+1. In Supabase Dashboard, open **Authentication → URL Configuration**.
+2. Set the Site URL to the production web origin (for example, your Vercel domain).
+3. Add local and production callback URLs to Redirect URLs, including `http://localhost:3000/auth/callback` and `https://YOUR-VERCEL-DOMAIN/auth/callback`.
+4. Ensure invitation/confirmation email templates redirect to `/auth/callback` and use a supported token-hash or PKCE callback flow.
+5. Parent invitations currently originate from the existing `classpilot-account-management` Edge Function and use email. Parent phone OTP is not configured by this Next.js phase; it requires an SMS provider and verified phone-auth setup.
 
 ## Run locally
-
-1. Install Node.js 20 or later.
-2. Copy `.env.example` to `.env.local`.
-3. Set `DATABASE_URL` to a Neon connection string (optional for the UI; required for the health check).
-4. Run:
 
 ```bash
 npm install
@@ -44,14 +57,21 @@ npm run dev
 
 Open http://localhost:3000.
 
-## Database setup
+## Existing database and role model
 
-Review `db/schema.sql` and apply it only to a **new, empty Neon database**. It is a starter schema, not a migration to run against the existing Supabase project. Before production use, add verified authentication and enforce school/role/parent-child authorization on every server action and query. Do not expose database credentials to the browser.
+The checked-in Supabase baseline currently supports `school_admin`, `teacher` and `parent` profiles. The requested Bursar role is not in the existing role constraint and must be added through a reviewed forward-only migration with matching RLS policies before any Bursar account is created. Do not simulate role switching in the UI.
 
-## Vercel deployment
+The existing database audit is in `docs/CLASS_PILOT_DATABASE_ARCHITECTURE.md`. It records important follow-up work, including school registration email verification, CORS restrictions, abuse controls, missing student fields, fees, term structure, and confidential MSCE access boundaries.
 
-Import this repository/branch into Vercel, configure `DATABASE_URL` and deploy. Student photographs should be uploaded through a server-side route using a private Blob store or controlled access strategy; never put privileged tokens in client code.
+## Not production complete
 
-## Existing Supabase work
+The following still require implementation and testing:
+- Database-backed student, fees, attendance and results modules.
+- Bursar role and least-privilege policies.
+- Parent phone OTP and verified SMS delivery.
+- Student accounts (not in the existing profile role model).
+- Server-side provisioning flows, storage upload policies and audit logging.
+- Adversarial RLS tests for cross-school and parent-child isolation.
+- Full production build and deployment verification.
 
-The `supabase/migrations/` directory records migrations already applied to the existing Supabase project. The audit in `docs/CLASS_PILOT_DATABASE_ARCHITECTURE.md` identifies security and data-model gaps. Do not replay those historical migrations against that same live database.
+Do not use the dashboard preview with real personal or school data until these are complete.
