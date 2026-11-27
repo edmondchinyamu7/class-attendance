@@ -41,7 +41,7 @@ export default async function HomePage() {
       gender: "—",
       form: match ? Number(match[1]) : 0,
       stream: match?.[2]?.toUpperCase() || "",
-      mode: "Day" as const,
+      mode: "—",
       parent: student.parent_name || "",
       phone: student.parent_phone || student.phone || "",
       district: "—",
