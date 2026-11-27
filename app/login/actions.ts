@@ -56,7 +56,7 @@ export async function registerStudent(formData: FormData) {
   if (fullName.length < 2 || fullName.length > 120 || studentCode.length < 2 || studentCode.length > 40 ||
       !/^Form [1-4][A-C]$/.test(className) || phone.length > 30 || parentName.length > 120 ||
       parentPhone.length > 30 || parentEmail.length > 254 ||
-      (parentEmail && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(parentEmail))) {
+      (parentEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail))) {
     redirect("/?error=student-input");
   }
 
